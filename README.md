@@ -14,15 +14,6 @@ Una aplicación de escritorio para la gestión de estudiantes y préstamos de ay
 - **Base de Datos Local**: Almacenamiento persistente de datos con SQLite.
 - **Interfaz Intuitiva**: Diseñada con React y Ant Design para una experiencia de usuario óptima.
 
-## Capturas de pantalla
-
-_(Añadir capturas de pantalla aquí cuando estén disponibles)_
-
-## Requisitos previos
-
-- Node.js (v14.0.0 o superior)
-- npm (v6.0.0 o superior)
-
 ## Instalación
 
 1. Clona este repositorio:
