@@ -324,6 +324,7 @@ const EquipmentDetailPage = () => {
         <Table 
           columns={lendingsColumns} 
           dataSource={equipment.lendings} 
+          showSorterTooltip={false}
           rowKey="id"
           pagination={{ pageSize: 10 }}
           size="middle"

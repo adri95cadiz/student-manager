@@ -10,6 +10,8 @@ import {
   Space,
   Tooltip,
   Popconfirm,
+  Select, // Añadido para el filtro de disponibilidad
+  Tag, // Para mostrar etiquetas de disponibilidad
 } from "antd";
 import {
   PlusOutlined,
@@ -19,8 +21,11 @@ import {
   DeleteOutlined,
   DatabaseOutlined,
   ToolOutlined,
+  FilterOutlined, // Añadido para el icono de filtro
 } from "@ant-design/icons";
 import { Link, useNavigate } from "react-router-dom";
+
+const { Option } = Select; // Añadido para las opciones del selector
 
 const EquipmentPage = () => {
   const [equipment, setEquipment] = useState([]);
@@ -29,6 +34,7 @@ const EquipmentPage = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [form] = Form.useForm();
   const [searchText, setSearchText] = useState("");
+  const [availabilityFilter, setAvailabilityFilter] = useState("all"); // Nuevo estado para el filtro de disponibilidad
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -36,15 +42,30 @@ const EquipmentPage = () => {
   }, []);
 
   useEffect(() => {
+    // Aplicar filtros (búsqueda de texto + disponibilidad)
     const lowerSearchText = searchText.toLowerCase();
+    
     setFilteredEquipment(
       equipment.filter(
-        (item) =>
-          item.name?.toLowerCase().includes(lowerSearchText) ||
-          item.equipment_number?.toLowerCase().includes(lowerSearchText)
+        (item) => {
+          // Filtro de texto
+          const matchesText = 
+            item.name?.toLowerCase().includes(lowerSearchText) ||
+            item.equipment_number?.toLowerCase().includes(lowerSearchText);
+          
+          // Filtro de disponibilidad
+          let matchesAvailability = true;
+          if (availabilityFilter === "available") {
+            matchesAvailability = item.available_stock > 0;
+          } else if (availabilityFilter === "unavailable") {
+            matchesAvailability = item.available_stock <= 0;
+          }
+          
+          return matchesText && matchesAvailability;
+        }
       )
     );
-  }, [equipment, searchText]);
+  }, [equipment, searchText, availabilityFilter]); // Añadido availabilityFilter como dependencia
 
   const fetchEquipment = async () => {
     setLoading(true);
@@ -165,6 +186,11 @@ const EquipmentPage = () => {
       key: "available_stock",
       sorter: (a, b) => a.available_stock - b.available_stock,
       align: "right",
+      render: (stock) => (
+        <Tag color={stock > 0 ? 'green' : 'red'}>
+          {stock > 0 ? stock : 'Sin stock'}
+        </Tag>
+      )
     },
   ];
 
@@ -177,14 +203,26 @@ const EquipmentPage = () => {
           justifyContent: "space-between",
         }}
       >
-        <Input
-          placeholder="Buscar equipo (Nombre, Nº Equipo)"
-          prefix={<SearchOutlined />}
-          style={{ width: 300 }}
-          value={searchText}
-          onChange={(e) => setSearchText(e.target.value)}
-          allowClear
-        />
+        <Space>
+          <Input
+            placeholder="Buscar equipo (Nombre, Nº Equipo)"
+            prefix={<SearchOutlined />}
+            style={{ width: 300 }}
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+            allowClear
+          />
+          <Select
+            value={availabilityFilter}
+            onChange={setAvailabilityFilter}
+            style={{ width: 180 }}
+            suffixIcon={<FilterOutlined />}
+          >
+            <Option value="all">Todos los equipos</Option>
+            <Option value="available">Con disponibilidad</Option>
+            <Option value="unavailable">Sin disponibilidad</Option>
+          </Select>
+        </Space>
         <Button type="primary" icon={<PlusOutlined />} onClick={showAddModal}>
           Añadir Equipo
         </Button>
@@ -193,6 +231,7 @@ const EquipmentPage = () => {
       <Table
         columns={columns}
         dataSource={filteredEquipment}
+        showSorterTooltip={false}
         loading={loading}
         rowKey="id"
         pagination={{

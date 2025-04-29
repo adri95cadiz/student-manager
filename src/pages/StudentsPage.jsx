@@ -215,6 +215,7 @@ const StudentsPage = () => {
       <Table
         columns={columns}
         dataSource={filteredStudents}
+        showSorterTooltip={false}
         loading={loading}
         rowKey="id"
         pagination={{

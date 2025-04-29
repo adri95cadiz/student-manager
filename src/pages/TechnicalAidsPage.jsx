@@ -406,6 +406,7 @@ const TechnicalAidsPage = () => {
       <Table
         columns={columns}
         dataSource={filteredAids}
+        showSorterTooltip={false}
         loading={loading}
         rowKey="id"
         pagination={{

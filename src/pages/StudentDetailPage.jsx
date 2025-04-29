@@ -325,6 +325,7 @@ const StudentDetailPage = () => {
         <Table
           columns={lendingsColumns}
           dataSource={student.lendings}
+          showSorterTooltip={false}
           rowKey="id"
           pagination={{ pageSize: 10 }}
           size="middle"

@@ -91,13 +91,13 @@ const HomePage = () => {
       title: "Nº Equipamiento",
       dataIndex: "equipment_number",
       key: "equipment_number",
-      width: 120,
+      width: 140,
     },
     {
       title: "Ayudas Técnicas",
       dataIndex: "lending_count",
       key: "lending_count",
-      width: 100,
+      width: 200,
       align: "right",
       render: (count) => <Tag color="blue">{count}</Tag>,
     },
@@ -325,6 +325,7 @@ const HomePage = () => {
               <Table
                 dataSource={stats.topEquipment}
                 columns={topEquipmentColumns}
+                showSorterTooltip={false}
                 rowKey="id"
                 pagination={false}
                 size="small"
