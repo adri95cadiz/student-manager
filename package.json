@@ -1,6 +1,6 @@
 {
   "name": "registro-motorico",
-  "productName": "Registro motórico",
+  "productName": "registro-motorico",
   "version": "1.0.0",
   "description": "Registro motórico",
   "main": ".webpack/main",

@@ -36,8 +36,8 @@ const EquipmentDetailPage = () => {
         setEquipment(data);
       } catch (err) {
         console.error('Error fetching equipment details:', err);
-        setError('No se pudo cargar la información del equipo.');
-        message.error('Error al cargar los detalles del equipo.');
+        setError('No se pudo cargar la información del equipamiento.');
+        message.error('Error al cargar los detalles del equipamiento.');
       } finally {
         setLoading(false);
       }
@@ -50,7 +50,7 @@ const EquipmentDetailPage = () => {
     try {
       await window.electronAPI.returnTechnicalAid({ aidId });
       message.success('Ayuda técnica marcada como devuelta');
-      // Recargar los datos del equipo
+      // Recargar los datos del equipamiento
       const data = await window.electronAPI.getEquipmentDetail(parseInt(equipmentId));
       setEquipment(data);
     } catch (error) {
@@ -62,11 +62,11 @@ const EquipmentDetailPage = () => {
   const handleDeleteEquipment = async () => {
     try {
       await window.electronAPI.deleteEquipment(parseInt(equipmentId));
-      message.success('Equipo eliminado correctamente');
+      message.success('Equipamiento eliminado correctamente');
       navigate('/equipment');
     } catch (error) {
       console.error("Error deleting equipment:", error);
-      message.error(`Error al eliminar equipo: ${error.message}`);
+      message.error(`Error al eliminar equipamiento: ${error.message}`);
     }
   };
 
@@ -89,14 +89,14 @@ const EquipmentDetailPage = () => {
         id: parseInt(equipmentId),
         ...values
       });
-      message.success("Equipo actualizado correctamente");
+      message.success("Equipamiento actualizado correctamente");
       setIsEditModalVisible(false);
-      // Recargar los datos del equipo
+      // Recargar los datos del equipamiento
       const data = await window.electronAPI.getEquipmentDetail(parseInt(equipmentId));
       setEquipment(data);
     } catch (error) {
       console.error("Error updating equipment:", error);
-      message.error(`Error al actualizar equipo: ${error.message}`);
+      message.error(`Error al actualizar equipamiento: ${error.message}`);
     }
   };
 
@@ -194,12 +194,12 @@ const EquipmentDetailPage = () => {
     return (
       <div style={{ padding: 24 }}>
         <Empty 
-          description={error || "No se encontró información del equipo"} 
+          description={error || "No se encontró información del equipamiento"} 
           image={Empty.PRESENTED_IMAGE_SIMPLE} 
         />
         <div style={{ textAlign: 'center', marginTop: 16 }}>
           <Button type="primary" onClick={() => navigate('/equipment')}>
-            Volver a Equipos
+            Volver a Equipamientos
           </Button>
         </div>
       </div>
@@ -233,7 +233,7 @@ const EquipmentDetailPage = () => {
             Editar
           </Button>
           <Popconfirm
-            title="¿Estás seguro de eliminar este equipo?"
+            title="¿Estás seguro de eliminar este equipamiento?"
             description="Se eliminarán todas sus ayudas técnicas asociadas."
             onConfirm={handleDeleteEquipment}
             okText="Eliminar"
@@ -247,15 +247,15 @@ const EquipmentDetailPage = () => {
         </Space>
       </div>
       
-      {/* Información del equipo */}
+      {/* Información del equipamiento */}
       <Row gutter={24}>
         <Col span={12}>
           <Card>
-            <Descriptions title="Información del Equipo" bordered>
+            <Descriptions title="Información del Equipamiento" bordered>
               <Descriptions.Item label="Nombre" span={3}>
                 {equipment.name}
               </Descriptions.Item>
-              <Descriptions.Item label="Nº Equipo" span={3}>
+              <Descriptions.Item label="Nº Equipamiento" span={3}>
                 {equipment.equipment_number}
               </Descriptions.Item>
               <Descriptions.Item label="Stock Inicial" span={3}>
@@ -333,7 +333,7 @@ const EquipmentDetailPage = () => {
       
       {/* Modal de Edición */}
       <Modal
-        title="Editar Equipo"
+        title="Editar Equipamiento"
         open={isEditModalVisible}
         onCancel={handleEditCancel}
         footer={null}
@@ -353,20 +353,20 @@ const EquipmentDetailPage = () => {
             name="name"
             label="Nombre"
             rules={[
-              { required: true, message: "Por favor ingresa el nombre del equipo" }
+              { required: true, message: "Por favor ingresa el nombre del Equipamiento" }
             ]}
           >
-            <Input placeholder="Nombre del equipo" />
+            <Input placeholder="Nombre del Equipamiento" />
           </Form.Item>
 
           <Form.Item
             name="equipment_number"
-            label="Número de Equipo"
+            label="Número de Equipamiento"
             rules={[
-              { required: true, message: "Por favor ingresa el número del equipo" }
+              { required: true, message: "Por favor ingresa el número del Equipamiento" }
             ]}
           >
-            <Input placeholder="Número identificador del equipo" />
+            <Input placeholder="Número identificador del Equipamiento" />
           </Form.Item>
 
           <Form.Item

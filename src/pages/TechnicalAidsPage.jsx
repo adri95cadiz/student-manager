@@ -90,7 +90,7 @@ const TechnicalAidsPage = () => {
       const [aidsData, studentsData, equipmentData] = await Promise.all([
         window.electronAPI.getTechnicalAids(),
         window.electronAPI.getStudents(), // Necesitamos estudiantes para el selector
-        window.electronAPI.getEquipment(), // Necesitamos equipos para el selector (con stock)
+        window.electronAPI.getEquipment(), // Necesitamos equipamientos para el selector (con stock)
       ]);
       setAids(aidsData);
       setStudents(studentsData);
@@ -144,7 +144,7 @@ const TechnicalAidsPage = () => {
       await window.electronAPI.addTechnicalAid(aidData);
       message.success("Ayuda técnica registrada correctamente");
       setIsModalVisible(false);
-      fetchAllData(); // Recargar todos los datos (incluido stock de equipos)
+      fetchAllData(); // Recargar todos los datos (incluido stock de equipamientos)
     } catch (error) {
       console.error("Error adding aid:", error);
       message.error(`Error al registrar ayuda técnica: ${error.message}`);
@@ -206,7 +206,7 @@ const TechnicalAidsPage = () => {
     }
   };
 
-  // Función para manejar cambio de equipo seleccionado
+  // Función para manejar cambio de equipamiento seleccionado
   const handleEquipmentChange = (equipmentId) => {
     const selectedEquipment = equipment.find((item) => item.id === equipmentId);
     if (selectedEquipment) {
@@ -368,7 +368,7 @@ const TechnicalAidsPage = () => {
           {" "}
           {/* Usar Space wrap para mejor layout en pantallas pequeñas */}
           <Input
-            placeholder="Buscar (Equipo, Estudiante, Nº, Curso)"
+            placeholder="Buscar (Equipamiento, Estudiante, Nº, Curso)"
             prefix={<SearchOutlined />}
             style={{ width: 300 }}
             value={searchText}
@@ -458,12 +458,12 @@ const TechnicalAidsPage = () => {
 
           <Form.Item
             name="equipment_id"
-            label="Equipo"
-            rules={[{ required: true, message: "Selecciona un equipo" }]}
+            label="Equipamiento"
+            rules={[{ required: true, message: "Selecciona un equipamiento" }]}
           >
             <Select
               showSearch
-              placeholder="Busca o selecciona un equipo (Stock disponible)"
+              placeholder="Busca o selecciona un equipamiento (Stock disponible)"
               optionFilterProp="children"
               filterOption={(input, option) =>
                 option.children.toLowerCase().includes(input.toLowerCase())

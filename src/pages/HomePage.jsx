@@ -77,7 +77,7 @@ const HomePage = () => {
     }
   };
 
-  // Columnas para la tabla de top equipos
+  // Columnas para la tabla de top equipamientos
   const topEquipmentColumns = [
     {
       title: "Equipamiento",
@@ -311,7 +311,7 @@ const HomePage = () => {
         </Col>
       </Row>
 
-      {/* Tercera fila - Top 5 equipos y estudiantes */}
+      {/* Tercera fila - Top 5 equipamientos y estudiantes */}
       <Row gutter={[16, 16]} style={{ marginTop: 16 }}>
         <Col xs={24} md={12}>
           <Card

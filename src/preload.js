@@ -16,7 +16,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   getStudentDetail: (studentId) => ipcRenderer.invoke('db-get-student-detail', studentId),
   updateStudent: (studentData) => ipcRenderer.invoke('db-update-student', studentData),
 
-  // Equipos
+  // Equipamientos
   getEquipment: () => ipcRenderer.invoke('db-get-equipment'),
   addEquipment: (equipmentData) => ipcRenderer.invoke('db-add-equipment', equipmentData),
   deleteEquipment: (equipmentId) => ipcRenderer.invoke('db-delete-equipment', equipmentId),

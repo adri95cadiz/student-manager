@@ -1,11 +1,11 @@
 # Student Manager
 
-Una aplicación de escritorio para la gestión de estudiantes y préstamos de ayudas técnicas. Permite administrar inventario de equipos, registro de estudiantes y seguimiento completo de préstamos.
+Una aplicación de escritorio para la gestión de estudiantes y préstamos de ayudas técnicas. Permite administrar inventario de equipamientos, registro de estudiantes y seguimiento completo de préstamos.
 
 ## Características
 
 - **Gestión de Estudiantes**: Registro completo de información de estudiantes con NIE y número de estudiante.
-- **Inventario de Equipos**: Control de equipos disponibles con seguimiento de stock.
+- **Inventario de Equipamientos**: Control de equipamientos disponibles con seguimiento de stock.
 - **Gestión de Préstamos**:
   - Registro de préstamos de ayudas técnicas a estudiantes
   - Control de devoluciones
@@ -61,16 +61,16 @@ student-manager-app/
 
 La sección de Estudiantes permite añadir, editar y eliminar registros de estudiantes con su información personal.
 
-### Inventario de Equipos
+### Inventario de Equipamientos
 
-El módulo de equipos facilita el registro y seguimiento del inventario disponible para préstamos.
+El módulo de equipamientos facilita el registro y seguimiento del inventario disponible para préstamos.
 
 ### Ayudas Técnicas
 
-Esta sección gestiona los préstamos de equipos a estudiantes, permitiendo:
+Esta sección gestiona los préstamos de equipamientos a estudiantes, permitiendo:
 
 - Registro de nuevos préstamos
-- Devolución de equipos
+- Devolución de equipamientos
 - Filtrado por estado (pendiente/devuelto)
 - Filtrado por curso escolar
 - Búsqueda rápida

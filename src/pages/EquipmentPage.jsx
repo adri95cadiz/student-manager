@@ -73,7 +73,7 @@ const EquipmentPage = () => {
       const data = await window.electronAPI.getEquipment();
       setEquipment(data);
     } catch (error) {
-      message.error(`Error al cargar equipos: ${error.message}`);
+      message.error(`Error al cargar equipamientos: ${error.message}`);
     } finally {
       setLoading(false);
     }
@@ -92,15 +92,15 @@ const EquipmentPage = () => {
     setLoading(true);
     try {
       await window.electronAPI.addEquipment(values);
-      message.success("Equipo añadido correctamente");
+      message.success("Equipamiento añadido correctamente");
       setIsModalVisible(false);
       fetchEquipment(); // Recargar lista
     } catch (error) {
       console.error("Error adding equipment:", error);
       if (error.message && error.message.includes("UNIQUE constraint failed")) {
-        message.error("Error: El número de equipo introducido ya existe.");
+        message.error("Error: El número de equipamiento introducido ya existe.");
       } else {
-        message.error(`Error al añadir equipo: ${error.message}`);
+        message.error(`Error al añadir equipamiento: ${error.message}`);
       }
     } finally {
       setLoading(false);
@@ -111,11 +111,11 @@ const EquipmentPage = () => {
     setLoading(true);
     try {
       await window.electronAPI.deleteEquipment(equipmentId);
-      message.success("Equipo eliminado correctamente");
+      message.success("Equipamiento eliminado correctamente");
       fetchEquipment();
     } catch (error) {
       console.error("Error deleting equipment:", error);
-      message.error(`Error al eliminar equipo: ${error.message}`);
+      message.error(`Error al eliminar equipamiento: ${error.message}`);
     } finally {
       setLoading(false);
     }
@@ -205,7 +205,7 @@ const EquipmentPage = () => {
       >
         <Space>
           <Input
-            placeholder="Buscar equipo (Nombre, Nº Equipo)"
+            placeholder="Buscar equipamiento (Nombre, Nº Equipamiento)"
             prefix={<SearchOutlined />}
             style={{ width: 300 }}
             value={searchText}
@@ -218,13 +218,13 @@ const EquipmentPage = () => {
             style={{ width: 180 }}
             suffixIcon={<FilterOutlined />}
           >
-            <Option value="all">Todos los equipos</Option>
+            <Option value="all">Todos los equipamientos</Option>
             <Option value="available">Con disponibilidad</Option>
             <Option value="unavailable">Sin disponibilidad</Option>
           </Select>
         </Space>
         <Button type="primary" icon={<PlusOutlined />} onClick={showAddModal}>
-          Añadir Equipo
+          Añadir Equipamiento
         </Button>
       </Space>
 
@@ -242,7 +242,7 @@ const EquipmentPage = () => {
         size="small"
       />
 
-      {/* Modal para añadir equipo */}
+      {/* Modal para añadir equipamiento */}
       <Modal
         title="Añadir Nuevo Equipamiento"
         open={isModalVisible}
@@ -281,7 +281,7 @@ const EquipmentPage = () => {
           <Form.Item
             name="initial_stock"
             label="Stock Inicial"
-            tooltip="Cantidad inicial de este tipo de equipo disponible."
+            tooltip="Cantidad inicial de este tipo de equipamiento disponible."
             rules={[
               {
                 required: true,
@@ -301,7 +301,7 @@ const EquipmentPage = () => {
             <Space>
               <Button onClick={handleCancel}>Cancelar</Button>
               <Button type="primary" htmlType="submit" loading={loading}>
-                Añadir Equipo
+                Añadir Equipamiento
               </Button>
             </Space>
           </Form.Item>

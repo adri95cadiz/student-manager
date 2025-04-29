@@ -52,7 +52,7 @@ app.whenReady().then(() => {
           if (err) console.error("Error creating students table", err.message);
         });
 
-        // Crear tabla de equipos si no existe
+        // Crear tabla de equipamientos si no existe
         db.run(`CREATE TABLE IF NOT EXISTS equipment (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           equipment_number TEXT UNIQUE NOT NULL,
@@ -197,7 +197,7 @@ app.whenReady().then(() => {
     });
   });
 
-  // --- Equipos ---
+  // --- Equipamientos ---
   ipcMain.handle('db-get-equipment', async () => {
     return new Promise((resolve, reject) => {
       // Calculamos el stock disponible restando los préstamos activos
@@ -225,10 +225,10 @@ app.whenReady().then(() => {
     });
   });
 
-  // Obtener un equipo por ID con sus préstamos
+  // Obtener un equipamiento por ID con sus préstamos
   ipcMain.handle('db-get-equipment-detail', async (event, equipmentId) => {
     return new Promise((resolve, reject) => {
-      // Primero obtenemos los datos del equipo con su stock actual
+      // Primero obtenemos los datos del equipamiento con su stock actual
       const equipmentSql = `
         SELECT
           e.id,
@@ -250,10 +250,10 @@ app.whenReady().then(() => {
         }
 
         if (!equipment) {
-          return reject(new Error('No se encontró el equipo con el ID proporcionado.'));
+          return reject(new Error('No se encontró el equipamiento con el ID proporcionado.'));
         }
 
-        // Luego obtenemos los préstamos asociados al equipo
+        // Luego obtenemos los préstamos asociados al equipamiento
         const lendingsSql = `
           SELECT 
             l.id, l.quantity, l.lending_date, l.return_date, l.school_year,
@@ -270,7 +270,7 @@ app.whenReady().then(() => {
             return reject(err);
           }
 
-          // Devolvemos equipo con sus préstamos
+          // Devolvemos equipamiento con sus préstamos
           resolve({
             ...equipment,
             lendings: lendings || []
@@ -295,7 +295,7 @@ app.whenReady().then(() => {
     });
   });
 
-  // Actualizar un equipo
+  // Actualizar un equipamiento
   ipcMain.handle('db-update-equipment', async (event, equipmentData) => {
     const { id, equipment_number, name, initial_stock } = equipmentData;
     return new Promise((resolve, reject) => {
@@ -306,9 +306,9 @@ app.whenReady().then(() => {
           reject(err);
         } else {
           if (this.changes > 0) {
-            resolve({ success: true, message: 'Equipo actualizado correctamente' });
+            resolve({ success: true, message: 'Equipamiento actualizado correctamente' });
           } else {
-            reject(new Error('No se encontró el equipo con el ID proporcionado.'));
+            reject(new Error('No se encontró el equipamiento con el ID proporcionado.'));
           }
         }
       });
@@ -325,9 +325,9 @@ app.whenReady().then(() => {
           reject(err);
         } else {
           if (this.changes > 0) {
-            resolve({ success: true, message: 'Equipo eliminado' });
+            resolve({ success: true, message: 'Equipamiento eliminado' });
           } else {
-            reject(new Error('No se encontró el equipo con el ID proporcionado.'));
+            reject(new Error('No se encontró el equipamiento con el ID proporcionado.'));
           }
         }
       });
@@ -365,7 +365,7 @@ app.whenReady().then(() => {
           });
         });
 
-        // 2. Total de equipos
+        // 2. Total de equipamientos
         const totalEquipmentPromise = new Promise((resolve, reject) => {
           db.get('SELECT COUNT(*) as count FROM equipment', [], (err, row) => {
             if (err) reject(err);
@@ -373,7 +373,7 @@ app.whenReady().then(() => {
           });
         });
 
-        // 3. Total de unidades de equipos (sumando stock inicial)
+        // 3. Total de unidades de equipamientos (sumando stock inicial)
         const totalUnitsPromise = new Promise((resolve, reject) => {
           db.get('SELECT SUM(initial_stock) as total FROM equipment', [], (err, row) => {
             if (err) reject(err);
@@ -424,7 +424,7 @@ app.whenReady().then(() => {
           });
         });
 
-        // 7. Top 5 equipos más prestados
+        // 7. Top 5 equipamientos más prestados
         const topEquipmentPromise = new Promise((resolve, reject) => {
           const sql = `
             SELECT 
