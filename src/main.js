@@ -98,6 +98,47 @@ app.whenReady().then(() => {
     });
   });
 
+  // Obtener un estudiante por ID con sus préstamos
+  ipcMain.handle('db-get-student-detail', async (event, studentId) => {
+    return new Promise((resolve, reject) => {
+      // Primero obtenemos los datos del estudiante
+      db.get("SELECT * FROM students WHERE id = ?", [studentId], (err, student) => {
+        if (err) {
+          console.error('Error fetching student:', err.message);
+          return reject(err);
+        }
+        
+        if (!student) {
+          return reject(new Error('No se encontró el estudiante con el ID proporcionado.'));
+        }
+        
+        // Luego obtenemos los préstamos asociados al estudiante
+        const lendingsSql = `
+          SELECT 
+            l.id, l.quantity, l.lending_date, l.return_date, l.school_year,
+            e.id as equipment_id, e.name as equipment_name, e.equipment_number
+          FROM lendings l
+          JOIN equipment e ON l.equipment_id = e.id
+          WHERE l.student_id = ?
+          ORDER BY l.lending_date DESC
+        `;
+        
+        db.all(lendingsSql, [studentId], (err, lendings) => {
+          if (err) {
+            console.error('Error fetching student lendings:', err.message);
+            return reject(err);
+          }
+          
+          // Devolvemos estudiante con sus préstamos
+          resolve({
+            ...student,
+            lendings: lendings || []
+          });
+        });
+      });
+    });
+  });
+
   // Ejemplo: Añadir un estudiante
   ipcMain.handle('db-add-student', async (event, studentData) => {
     const { name, surname, second_surname, nie, student_number } = studentData;
@@ -160,6 +201,61 @@ app.whenReady().then(() => {
         } else {
           resolve(rows);
         }
+      });
+    });
+  });
+
+  // Obtener un equipo por ID con sus préstamos
+  ipcMain.handle('db-get-equipment-detail', async (event, equipmentId) => {
+    return new Promise((resolve, reject) => {
+      // Primero obtenemos los datos del equipo con su stock actual
+      const equipmentSql = `
+        SELECT
+          e.id,
+          e.equipment_number,
+          e.name,
+          e.initial_stock,
+          e.initial_stock - COALESCE(SUM(CASE WHEN (l.return_date IS NULL OR l.return_date > CURRENT_DATE) THEN l.quantity ELSE 0 END), 0) AS available_stock,
+          COALESCE(SUM(CASE WHEN (l.return_date IS NULL OR l.return_date > CURRENT_DATE) THEN l.quantity ELSE 0 END), 0) as lended_stock
+        FROM equipment e
+        LEFT JOIN lendings l ON e.id = l.equipment_id
+        WHERE e.id = ?
+        GROUP BY e.id, e.equipment_number, e.name, e.initial_stock
+      `;
+      
+      db.get(equipmentSql, [equipmentId], (err, equipment) => {
+        if (err) {
+          console.error('Error fetching equipment:', err.message);
+          return reject(err);
+        }
+        
+        if (!equipment) {
+          return reject(new Error('No se encontró el equipo con el ID proporcionado.'));
+        }
+        
+        // Luego obtenemos los préstamos asociados al equipo
+        const lendingsSql = `
+          SELECT 
+            l.id, l.quantity, l.lending_date, l.return_date, l.school_year,
+            s.id as student_id, s.name as student_name, s.surname as student_surname, s.student_number
+          FROM lendings l
+          JOIN students s ON l.student_id = s.id
+          WHERE l.equipment_id = ?
+          ORDER BY l.lending_date DESC
+        `;
+        
+        db.all(lendingsSql, [equipmentId], (err, lendings) => {
+          if (err) {
+            console.error('Error fetching equipment lendings:', err.message);
+            return reject(err);
+          }
+          
+          // Devolvemos equipo con sus préstamos
+          resolve({
+            ...equipment,
+            lendings: lendings || []
+          });
+        });
       });
     });
   });

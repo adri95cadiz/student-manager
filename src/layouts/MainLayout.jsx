@@ -47,8 +47,21 @@ const MainLayout = ({ children }) => {
     </Breadcrumb.Item>,
     ...pathSnippets.map((snippet, index) => {
       const url = `#/${pathSnippets.slice(0, index + 1).join("/")}`;
-      const name = snippet.charAt(0).toUpperCase() + snippet.slice(1);
-      // TODO: Mapear nombres de ruta a etiquetas más amigables si es necesario
+      let name = "";
+      switch (snippet) {
+        case "students":
+          name = "Estudiantes";
+          break;
+        case "equipment":
+          name = "Equipamientos";
+          break;
+        case "technical-aids":
+          name = "Ayudas Técnicas";
+          break;
+        default:
+          name = snippet;
+          break;
+      }
       return (
         <Breadcrumb.Item key={url}>
           {/* Si es el último, no es un enlace */}
@@ -85,7 +98,7 @@ const MainLayout = ({ children }) => {
         />
       </Sider>
       <Layout className="site-layout">
-        <Content style={{ margin: "0 16px", overflowX: "auto" }}>
+        <Content style={{ margin: "0 16px" }}>
           <Breadcrumb style={{ margin: "16px 0" }}>
             {breadcrumbItems}
           </Breadcrumb>

@@ -10,18 +10,20 @@ contextBridge.exposeInMainWorld('electronAPI', {
   getStudents: () => ipcRenderer.invoke('db-get-students'),
   addStudent: (studentData) => ipcRenderer.invoke('db-add-student', studentData),
   deleteStudent: (studentId) => ipcRenderer.invoke('db-delete-student', studentId),
+  getStudentDetail: (studentId) => ipcRenderer.invoke('db-get-student-detail', studentId),
 
   // Equipos
   getEquipment: () => ipcRenderer.invoke('db-get-equipment'),
   addEquipment: (equipmentData) => ipcRenderer.invoke('db-add-equipment', equipmentData),
   deleteEquipment: (equipmentId) => ipcRenderer.invoke('db-delete-equipment', equipmentId),
+  getEquipmentDetail: (equipmentId) => ipcRenderer.invoke('db-get-equipment-detail', equipmentId),
 
   // Ayudas Técnicas
   getTechnicalAids: () => ipcRenderer.invoke('db-get-technical-aids'),
   addTechnicalAid: (aidData) => ipcRenderer.invoke('db-add-technical-aid', aidData),
   returnTechnicalAid: (returnData) => ipcRenderer.invoke('db-return-technical-aid', returnData),
   updateTechnicalAid: (aidData) => ipcRenderer.invoke('db-update-technical-aid', aidData),
-  // deleteTechnicalAid: (aidId) => ipcRenderer.invoke('db-delete-technical-aid', aidId), // Se añadirá después
+  deleteTechnicalAid: (aidId) => ipcRenderer.invoke('db-delete-technical-aid', aidId),
 
   // Aquí añadiremos más funciones para lendings más adelante
   // getLendings: (filters) => ipcRenderer.invoke('db-get-lendings', filters),

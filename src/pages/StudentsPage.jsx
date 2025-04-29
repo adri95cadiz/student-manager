@@ -40,12 +40,12 @@ const StudentsPage = () => {
     setFilteredStudents(
       students.filter(
         (student) =>
-          student.name.toLowerCase().includes(lowerSearchText) ||
-          student.surname.toLowerCase().includes(lowerSearchText) ||
+          student.name?.toLowerCase().includes(lowerSearchText) ||
+          student.surname?.toLowerCase().includes(lowerSearchText) ||
           (student.second_surname &&
-            student.second_surname.toLowerCase().includes(lowerSearchText)) ||
-          student.nie.toLowerCase().includes(lowerSearchText) ||
-          student.student_number.toLowerCase().includes(lowerSearchText)
+            student.second_surname?.toLowerCase().includes(lowerSearchText)) ||
+          student.nie?.toLowerCase().includes(lowerSearchText) ||
+          student.student_number?.toLowerCase().includes(lowerSearchText)
       )
     );
   }, [students, searchText]);
