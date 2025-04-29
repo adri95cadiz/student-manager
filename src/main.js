@@ -17,11 +17,10 @@ const createWindow = () => {
   const mainWindow = new BrowserWindow({
     autoHideMenuBar: true,
     title: "Registro motórico",
-    icon: path.join(__dirname, 'icon.png'),
+    icon: path.join(__dirname, 'src/assets/icon.png'),
     width: 1200,
     height: 800,
     webPreferences: {
-      devTools: false,
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
     },
   });

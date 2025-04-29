@@ -33,7 +33,7 @@ const MainLayout = ({ children }) => {
   const location = useLocation();
 
   // Determinar la clave seleccionada basada en la ruta actual
-  const selectedKeys = [location.pathname];
+  const selectedKeys = [`/${location.pathname.split("/").slice(1)[0]}`];
 
   const handleMenuClick = (e) => {
     navigate(e.key);

@@ -19,13 +19,12 @@ Una aplicación de escritorio para la gestión de estudiantes y préstamos de ay
 1. Clona este repositorio:
 
    ```
-   git clone https://github.com/tuusuario/student-manager.git
+   git clone https://github.com/adri95cadiz/student-manager.git
    cd student-manager
    ```
 2. Instala las dependencias:
 
    ```
-   cd student-manager-app
    npm install
    ```
 3. Inicia la aplicación en modo desarrollo:

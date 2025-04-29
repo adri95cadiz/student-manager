@@ -1,8 +1,8 @@
 {
-  "name": "student-manager-app",
-  "productName": "student-manager-app",
+  "name": "registro-motorico",
+  "productName": "Registro motórico",
   "version": "1.0.0",
-  "description": "My Electron application description",
+  "description": "Registro motórico",
   "main": ".webpack/main",
   "scripts": {
     "start": "electron-forge start",
