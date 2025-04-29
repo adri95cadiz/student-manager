@@ -12,7 +12,7 @@ import {
   DeleteOutlined,
   SwapOutlined,
   ToolOutlined,
-  BookOutlined,
+  AuditOutlined,
   WarningOutlined
 } from '@ant-design/icons';
 import dayjs from 'dayjs';
@@ -272,7 +272,7 @@ const EquipmentDetailPage = () => {
                 <Statistic
                   title="Ayudas Técnicas Activas"
                   value={activeLendings.length}
-                  prefix={<BookOutlined />}
+                  prefix={<AuditOutlined />}
                 />
               </Col>
               <Col span={12}>
@@ -319,7 +319,7 @@ const EquipmentDetailPage = () => {
       {/* Historial de ayudas técnicas */}
       <div style={{ marginTop: 24 }}>
         <Title level={4}>
-          <BookOutlined /> Historial de Ayudas Técnicas
+          <AuditOutlined /> Historial de Ayudas Técnicas
         </Title>
         <Table 
           columns={lendingsColumns} 

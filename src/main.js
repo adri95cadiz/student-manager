@@ -15,8 +15,10 @@ if (require('electron-squirrel-startup')) {
 const createWindow = () => {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
+    autoHideMenuBar: true,
+    title: "Registro motórico",
+    width: 1200,
+    height: 800,
     webPreferences: {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
     },
@@ -59,7 +61,7 @@ app.whenReady().then(() => {
           name TEXT NOT NULL,
           initial_stock INTEGER DEFAULT 1
         )`, (err) => {
-           if (err) console.error("Error creating equipment table", err.message);
+          if (err) console.error("Error creating equipment table", err.message);
         });
 
         // Crear tabla de préstamos si no existe
@@ -74,7 +76,7 @@ app.whenReady().then(() => {
           FOREIGN KEY (equipment_id) REFERENCES equipment (id) ON DELETE CASCADE,
           FOREIGN KEY (student_id) REFERENCES students (id) ON DELETE CASCADE
         )`, (err) => {
-           if (err) console.error("Error creating lendings table", err.message);
+          if (err) console.error("Error creating lendings table", err.message);
         });
       });
     }
@@ -107,11 +109,11 @@ app.whenReady().then(() => {
           console.error('Error fetching student:', err.message);
           return reject(err);
         }
-        
+
         if (!student) {
           return reject(new Error('No se encontró el estudiante con el ID proporcionado.'));
         }
-        
+
         // Luego obtenemos los préstamos asociados al estudiante
         const lendingsSql = `
           SELECT 
@@ -122,13 +124,13 @@ app.whenReady().then(() => {
           WHERE l.student_id = ?
           ORDER BY l.lending_date DESC
         `;
-        
+
         db.all(lendingsSql, [studentId], (err, lendings) => {
           if (err) {
             console.error('Error fetching student lendings:', err.message);
             return reject(err);
           }
-          
+
           // Devolvemos estudiante con sus préstamos
           resolve({
             ...student,
@@ -144,7 +146,7 @@ app.whenReady().then(() => {
     const { name, surname, second_surname, nie, student_number } = studentData;
     return new Promise((resolve, reject) => {
       const sql = `INSERT INTO students (name, surname, second_surname, nie, student_number) VALUES (?, ?, ?, ?, ?)`;
-      db.run(sql, [name, surname, second_surname, nie, student_number], function(err) {
+      db.run(sql, [name, surname, second_surname, nie, student_number], function (err) {
         if (err) {
           console.error('Error adding student:', err.message);
           reject(err);
@@ -161,7 +163,7 @@ app.whenReady().then(() => {
     const { id, name, surname, second_surname, nie, student_number } = studentData;
     return new Promise((resolve, reject) => {
       const sql = `UPDATE students SET name = ?, surname = ?, second_surname = ?, nie = ?, student_number = ? WHERE id = ?`;
-      db.run(sql, [name, surname, second_surname, nie, student_number, id], function(err) {
+      db.run(sql, [name, surname, second_surname, nie, student_number, id], function (err) {
         if (err) {
           console.error('Error updating student:', err.message);
           reject(err);
@@ -180,7 +182,7 @@ app.whenReady().then(() => {
   ipcMain.handle('db-delete-student', async (event, studentId) => {
     return new Promise((resolve, reject) => {
       const sql = `DELETE FROM students WHERE id = ?`;
-      db.run(sql, [studentId], function(err) {
+      db.run(sql, [studentId], function (err) {
         if (err) {
           console.error('Error deleting student:', err.message);
           reject(err);
@@ -242,17 +244,17 @@ app.whenReady().then(() => {
         WHERE e.id = ?
         GROUP BY e.id, e.equipment_number, e.name, e.initial_stock
       `;
-      
+
       db.get(equipmentSql, [equipmentId], (err, equipment) => {
         if (err) {
           console.error('Error fetching equipment:', err.message);
           return reject(err);
         }
-        
+
         if (!equipment) {
           return reject(new Error('No se encontró el equipo con el ID proporcionado.'));
         }
-        
+
         // Luego obtenemos los préstamos asociados al equipo
         const lendingsSql = `
           SELECT 
@@ -263,13 +265,13 @@ app.whenReady().then(() => {
           WHERE l.equipment_id = ?
           ORDER BY l.lending_date DESC
         `;
-        
+
         db.all(lendingsSql, [equipmentId], (err, lendings) => {
           if (err) {
             console.error('Error fetching equipment lendings:', err.message);
             return reject(err);
           }
-          
+
           // Devolvemos equipo con sus préstamos
           resolve({
             ...equipment,
@@ -284,7 +286,7 @@ app.whenReady().then(() => {
     const { equipment_number, name, initial_stock } = equipmentData;
     return new Promise((resolve, reject) => {
       const sql = `INSERT INTO equipment (equipment_number, name, initial_stock) VALUES (?, ?, ?)`;
-      db.run(sql, [equipment_number, name, initial_stock || 1], function(err) {
+      db.run(sql, [equipment_number, name, initial_stock || 1], function (err) {
         if (err) {
           console.error('Error adding equipment:', err.message);
           reject(err);
@@ -300,7 +302,7 @@ app.whenReady().then(() => {
     const { id, equipment_number, name, initial_stock } = equipmentData;
     return new Promise((resolve, reject) => {
       const sql = `UPDATE equipment SET equipment_number = ?, name = ?, initial_stock = ? WHERE id = ?`;
-      db.run(sql, [equipment_number, name, initial_stock, id], function(err) {
+      db.run(sql, [equipment_number, name, initial_stock, id], function (err) {
         if (err) {
           console.error('Error updating equipment:', err.message);
           reject(err);
@@ -319,7 +321,7 @@ app.whenReady().then(() => {
     return new Promise((resolve, reject) => {
       // Nota: La FK en lendings tiene ON DELETE CASCADE, así que los préstamos asociados se borrarán.
       const sql = `DELETE FROM equipment WHERE id = ?`;
-      db.run(sql, [equipmentId], function(err) {
+      db.run(sql, [equipmentId], function (err) {
         if (err) {
           console.error('Error deleting equipment:', err.message);
           reject(err);
@@ -347,6 +349,207 @@ app.whenReady().then(() => {
     const endYear = startYear + 1;
     return `${startYear}-${endYear}`;
   };
+
+  // Obtener estadísticas del dashboard
+  ipcMain.handle('db-get-dashboard-stats', async (event, { schoolYear } = {}) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        // Aplicar filtro por curso escolar si se proporciona
+        const schoolYearFilter = schoolYear && schoolYear !== 'all'
+          ? `WHERE l.school_year = '${schoolYear}'`
+          : '';
+
+        // 1. Total de estudiantes
+        const totalStudentsPromise = new Promise((resolve, reject) => {
+          db.get('SELECT COUNT(*) as count FROM students', [], (err, row) => {
+            if (err) reject(err);
+            else resolve(row.count);
+          });
+        });
+
+        // 2. Total de equipos
+        const totalEquipmentPromise = new Promise((resolve, reject) => {
+          db.get('SELECT COUNT(*) as count FROM equipment', [], (err, row) => {
+            if (err) reject(err);
+            else resolve(row.count);
+          });
+        });
+
+        // 3. Total de unidades de equipos (sumando stock inicial)
+        const totalUnitsPromise = new Promise((resolve, reject) => {
+          db.get('SELECT SUM(initial_stock) as total FROM equipment', [], (err, row) => {
+            if (err) reject(err);
+            else resolve(row.total || 0);
+          });
+        });
+
+        // 4. Total de préstamos (del curso seleccionado si se proporciona)
+        const totalLendingsPromise = new Promise((resolve, reject) => {
+          const sql = `SELECT COUNT(*) as count FROM lendings l ${schoolYearFilter}`;
+          db.get(sql, [], (err, row) => {
+            if (err) reject(err);
+            else resolve(row.count);
+          });
+        });
+
+        // 5. Préstamos activos actuales (del curso seleccionado si se proporciona)
+        const activeLendingsPromise = new Promise((resolve, reject) => {
+          const sql = `
+            SELECT COUNT(*) as count 
+            FROM lendings l 
+            WHERE return_date IS NULL 
+            ${schoolYearFilter ? 'AND ' + schoolYearFilter.substring(5) : ''}
+          `;
+          db.get(sql, [], (err, row) => {
+            if (err) reject(err);
+            else resolve(row.count);
+          });
+        });
+
+        // 6. Promedio de días de préstamo por curso escolar
+        const avgLendingDaysPromise = new Promise((resolve, reject) => {
+          const sql = `
+            SELECT 
+              school_year,
+              ROUND(AVG(CASE 
+                WHEN return_date IS NULL THEN julianday('now') - julianday(lending_date)
+                ELSE julianday(return_date) - julianday(lending_date)
+              END)) as avg_days
+            FROM lendings l
+            ${schoolYearFilter}
+            GROUP BY school_year
+            ORDER BY school_year DESC
+          `;
+          db.all(sql, [], (err, rows) => {
+            if (err) reject(err);
+            else resolve(rows);
+          });
+        });
+
+        // 7. Top 5 equipos más prestados
+        const topEquipmentPromise = new Promise((resolve, reject) => {
+          const sql = `
+            SELECT 
+              e.id,
+              e.name,
+              e.equipment_number,
+              COUNT(l.id) as lending_count
+            FROM equipment e
+            JOIN lendings l ON e.id = l.equipment_id
+            ${schoolYearFilter}
+            GROUP BY e.id, e.name, e.equipment_number
+            ORDER BY lending_count DESC
+            LIMIT 5
+          `;
+          db.all(sql, [], (err, rows) => {
+            if (err) reject(err);
+            else resolve(rows);
+          });
+        });
+
+        // 8. Top 5 estudiantes con más préstamos
+        const topStudentsPromise = new Promise((resolve, reject) => {
+          const sql = `
+            SELECT 
+              s.id,
+              s.name,
+              s.surname,
+              s.student_number,
+              COUNT(l.id) as lending_count
+            FROM students s
+            JOIN lendings l ON s.id = l.student_id
+            ${schoolYearFilter}
+            GROUP BY s.id, s.name, s.surname, s.student_number
+            ORDER BY lending_count DESC
+            LIMIT 5
+          `;
+          db.all(sql, [], (err, rows) => {
+            if (err) reject(err);
+            else resolve(rows);
+          });
+        });
+
+        // 9. Obtener todos los cursos escolares disponibles
+        const schoolYearsPromise = new Promise((resolve, reject) => {
+          db.all('SELECT DISTINCT school_year FROM lendings ORDER BY school_year DESC', [],
+            (err, rows) => {
+              if (err) reject(err);
+              else resolve(rows.map(row => row.school_year));
+            }
+          );
+        });
+
+        // 10. Préstamos por mes para el curso seleccionado
+        const lendingsByMonthPromise = new Promise((resolve, reject) => {
+          const sql = `
+            SELECT 
+              strftime('%m', lending_date) as month,
+              COUNT(*) as count
+            FROM lendings l
+            ${schoolYearFilter}
+            GROUP BY month
+            ORDER BY month
+          `;
+          db.all(sql, [], (err, rows) => {
+            if (err) reject(err);
+            else {
+              // Completar los 12 meses aunque no haya datos
+              const monthsData = new Array(12).fill(0);
+              rows.forEach(row => {
+                // Los meses en SQLite empiezan en 01, por lo que restamos 1 para el índice del array
+                const monthIndex = parseInt(row.month, 10) - 1;
+                monthsData[monthIndex] = row.count;
+              });
+              resolve(monthsData);
+            }
+          });
+        });
+
+        // Ejecutar todas las promesas en paralelo
+        const [
+          totalStudents,
+          totalEquipment,
+          totalUnits,
+          totalLendings,
+          activeLendings,
+          avgLendingDays,
+          topEquipment,
+          topStudents,
+          schoolYears,
+          lendingsByMonth
+        ] = await Promise.all([
+          totalStudentsPromise,
+          totalEquipmentPromise,
+          totalUnitsPromise,
+          totalLendingsPromise,
+          activeLendingsPromise,
+          avgLendingDaysPromise,
+          topEquipmentPromise,
+          topStudentsPromise,
+          schoolYearsPromise,
+          lendingsByMonthPromise
+        ]);
+
+        // Devolver todos los datos
+        resolve({
+          totalStudents,
+          totalEquipment,
+          totalUnits,
+          totalLendings,
+          activeLendings,
+          avgLendingDays,
+          topEquipment,
+          topStudents,
+          schoolYears,
+          lendingsByMonth,
+          currentSchoolYear: schoolYear || 'all'
+        });
+      } catch (error) {
+        console.error('Error fetching dashboard stats:', error);
+        reject(error);
+      }
+    });
+  });
 
   ipcMain.handle('db-get-technical-aids', async () => {
     return new Promise((resolve, reject) => {
@@ -408,7 +611,7 @@ app.whenReady().then(() => {
 
         // 2. Si hay stock, insertar el préstamo
         const insertSql = `INSERT INTO lendings (student_id, equipment_id, quantity, lending_date, school_year) VALUES (?, ?, ?, ?, ?)`;
-        db.run(insertSql, [student_id, equipment_id, quantity, lending_date, school_year], function(err) {
+        db.run(insertSql, [student_id, equipment_id, quantity, lending_date, school_year], function (err) {
           if (err) {
             console.error('Error adding technical aid:', err.message);
             reject(err);
@@ -425,7 +628,7 @@ app.whenReady().then(() => {
     const final_return_date = return_date ? return_date : new Date().toISOString().split('T')[0];
     return new Promise((resolve, reject) => {
       const sql = `UPDATE lendings SET return_date = ? WHERE id = ?`;
-      db.run(sql, [final_return_date, aidId], function(err) {
+      db.run(sql, [final_return_date, aidId], function (err) {
         if (err) {
           console.error('Error returning technical aid:', err.message);
           reject(err);
@@ -461,7 +664,7 @@ app.whenReady().then(() => {
           school_year = ?
         WHERE id = ?`;
 
-      db.run(sql, [student_id, equipment_id, quantity, lending_date, final_return_date, school_year, aidId], function(err) {
+      db.run(sql, [student_id, equipment_id, quantity, lending_date, final_return_date, school_year, aidId], function (err) {
         if (err) {
           console.error('Error updating technical aid:', err.message);
           reject(err);
@@ -479,7 +682,7 @@ app.whenReady().then(() => {
   ipcMain.handle('db-delete-technical-aid', async (event, aidId) => {
     return new Promise((resolve, reject) => {
       const sql = `DELETE FROM lendings WHERE id = ?`;
-      db.run(sql, [aidId], function(err) {
+      db.run(sql, [aidId], function (err) {
         if (err) {
           console.error('Error deleting technical aid:', err.message);
           reject(err);
@@ -523,10 +726,10 @@ app.on('window-all-closed', () => {
       }
     });
   } else {
-     // Si no hay conexión a la BD, simplemente salir
-     if (process.platform !== 'darwin') {
-        app.quit();
-     }
+    // Si no hay conexión a la BD, simplemente salir
+    if (process.platform !== 'darwin') {
+      app.quit();
+    }
   }
 });
 

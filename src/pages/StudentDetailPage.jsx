@@ -27,7 +27,7 @@ import {
   DeleteOutlined,
   SwapOutlined,
   UserOutlined,
-  BookOutlined,
+  AuditOutlined,
 } from "@ant-design/icons";
 import dayjs from "dayjs";
 
@@ -305,13 +305,13 @@ const StudentDetailPage = () => {
             <Statistic
               title="Ayudas Técnicas Activas"
               value={activeLendings.length}
-              prefix={<BookOutlined />}
+              prefix={<AuditOutlined />}
             />
             <Divider style={{ margin: "16px 0" }} />
             <Statistic
               title="Ayudas Técnicas Totales"
               value={totalDevices}
-              prefix={<BookOutlined />}
+              prefix={<AuditOutlined />}
             />
           </Card>
         </Col>
@@ -320,7 +320,7 @@ const StudentDetailPage = () => {
       {/* Historial de ayudas técnicas */}
       <div style={{ marginTop: 24 }}>
         <Title level={4}>
-          <BookOutlined /> Historial de Ayudas Técnicas
+          <AuditOutlined /> Historial de Ayudas Técnicas
         </Title>
         <Table
           columns={lendingsColumns}
