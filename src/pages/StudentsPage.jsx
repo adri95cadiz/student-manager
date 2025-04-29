@@ -141,7 +141,8 @@ const StudentsPage = () => {
           </Tooltip>
           <Tooltip title="Eliminar">
             <Popconfirm
-              title="¿Seguro que quieres eliminar este estudiante?"
+              title="¿Estás seguro de eliminar este estudiante?"
+              description="Se eliminarán todas sus ayudas técnicas asociadas."
               onConfirm={() => handleDeleteStudent(record.id)}
               okText="Sí"
               cancelText="No"
@@ -236,7 +237,7 @@ const StudentsPage = () => {
           form={form}
           layout="vertical"
           onFinish={handleAddStudent}
-          requiredMark={false}
+          
         >
           <Form.Item
             name="student_number"
@@ -274,11 +275,11 @@ const StudentsPage = () => {
           >
             <Input prefix={<UserOutlined />} placeholder="Primer Apellido" />
           </Form.Item>
-          <Form.Item name="second_surname" label="Segundo Apellido (Opcional)">
-            <Input prefix={<UserOutlined />} placeholder="Segundo Apellido" />
+          <Form.Item name="second_surname" label="Segundo Apellido">
+            <Input prefix={<UserOutlined />} placeholder="Segundo Apellido (Opcional)" />
           </Form.Item>
-          <Form.Item name="nie" label="NIE/Documento Identificativo (Opcional)">
-            <Input prefix={<IdcardOutlined />} placeholder="NIE" />
+          <Form.Item name="nie" label="NIE/Documento Identificativo">
+            <Input prefix={<IdcardOutlined />} placeholder="NIE (Opcional)" />
           </Form.Item>
           <Form.Item style={{ textAlign: "right" }}>
             <Space>

@@ -18,13 +18,13 @@ import {
   PlusOutlined,
   SearchOutlined,
   SwapOutlined, // Icono para acción de devolver
-  UndoOutlined, // Opcional, otro icono para devolver
   FilterOutlined, // Icono para el filtro
   EditOutlined, // Icono para editar
   DeleteOutlined, // Icono para eliminar (se añadirá después)
 } from "@ant-design/icons";
 import dayjs from "dayjs"; // Para manejar fechas
 import "dayjs/locale/es"; // Localización española para dayjs
+import { Link } from "react-router-dom";
 dayjs.locale("es");
 
 const { Option } = Select;
@@ -284,17 +284,20 @@ const TechnicalAidsPage = () => {
         ) : (
           <Tag color="orange">Pendiente</Tag>
         ),
-      // Podríamos añadir filtros aquí para ver solo pendientes/devueltos
     },
     {
-      title: "Equipo",
+      title: "Equipamiento",
       dataIndex: "equipment_name",
       key: "equipment_name",
       sorter: (a, b) => a.equipment_name.localeCompare(b.equipment_name),
-      // Podríamos añadir enlace al detalle del equipo
+      render: (_, record) => (
+        <Link to={`/equipment/${record.equipment_id}`}>
+          {record.equipment_name}
+        </Link>
+      ),
     },
     {
-      title: "Nº Equipo",
+      title: "Nº Equipamiento",
       dataIndex: "equipment_number",
       key: "equipment_number",
       width: 120,
@@ -307,7 +310,11 @@ const TechnicalAidsPage = () => {
         `${a.student_name} ${a.student_surname}`.localeCompare(
           `${b.student_name} ${b.student_surname}`
         ),
-      // Podríamos añadir enlace al detalle del estudiante
+      render: (_, record) => (
+        <Link to={`/students/${record.student_id}`}>
+          {record.student_name} {record.student_surname}
+        </Link>
+      ),
     },
     {
       title: "Nº Estudiante",
@@ -345,7 +352,6 @@ const TechnicalAidsPage = () => {
       key: "school_year",
       width: 120,
       sorter: (a, b) => a.school_year.localeCompare(b.school_year),
-      // Podríamos añadir filtro por curso escolar aquí
     },
   ];
 
@@ -423,12 +429,7 @@ const TechnicalAidsPage = () => {
         destroyOnClose
         width={600}
       >
-        <Form
-          form={form}
-          layout="vertical"
-          onFinish={handleFormSubmit}
-          requiredMark={false}
-        >
+        <Form form={form} layout="vertical" onFinish={handleFormSubmit}>
           <Form.Item
             name="student_id"
             label="Estudiante"

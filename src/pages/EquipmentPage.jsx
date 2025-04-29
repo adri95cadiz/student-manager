@@ -118,7 +118,8 @@ const EquipmentPage = () => {
           </Tooltip>
           <Tooltip title="Eliminar">
             <Popconfirm
-              title="¿Seguro que quieres eliminar este equipo? Se eliminarán también sus ayudas técnicas asociadas."
+              title="¿Estás seguro de eliminar este equipamiento?"
+              description="Se eliminarán todas sus ayudas técnicas asociadas."
               onConfirm={() => handleDeleteEquipment(record.id)}
               okText="Sí"
               cancelText="No"
@@ -130,7 +131,7 @@ const EquipmentPage = () => {
       ),
     },
     {
-      title: "Nº Equipo",
+      title: "Nº Equipamiento",
       dataIndex: "equipment_number",
       key: "equipment_number",
       sorter: (a, b) => a.equipment_number.localeCompare(b.equipment_number),
@@ -204,44 +205,39 @@ const EquipmentPage = () => {
 
       {/* Modal para añadir equipo */}
       <Modal
-        title="Añadir Nuevo Equipo"
+        title="Añadir Nuevo Equipamiento"
         open={isModalVisible}
         onCancel={handleCancel}
         footer={null}
         destroyOnClose
       >
-        <Form
-          form={form}
-          layout="vertical"
-          onFinish={handleAddEquipment}
-          requiredMark={false}
-        >
+        <Form form={form} layout="vertical" onFinish={handleAddEquipment}>
           <Form.Item
             name="equipment_number"
-            label="Número de Equipo"
+            label="Número de Equipamiento"
             rules={[
               {
                 required: true,
-                message: "Por favor, introduce el número de equipo",
+                message: "Por favor, introduce el número de equipamiento",
               },
             ]}
           >
             <Input
               prefix={<BarcodeOutlined />}
-              placeholder="Identificador único del equipo"
+              placeholder="Identificador único del equipamiento"
             />
           </Form.Item>
           <Form.Item
             name="name"
-            label="Nombre del Equipo"
+            label="Nombre del Equipamiento"
             rules={[
               {
                 required: true,
-                message: "Por favor, introduce el nombre del equipo",
+                message: "Por favor, introduce el nombre del equipamiento",
               },
             ]}
           >
-            <Input prefix={<ToolOutlined />} placeholder="Nombre del equipo" />
+            <Input prefix={<ToolOutlined />} placeholder="Nombre del equipamiento" />
           </Form.Item>
           <Form.Item
             name="initial_stock"

@@ -17,6 +17,9 @@ import {
   Popconfirm,
   Tooltip,
   Empty,
+  Modal,
+  Form,
+  Input,
 } from "antd";
 import {
   ArrowLeftOutlined,
@@ -36,6 +39,8 @@ const StudentDetailPage = () => {
   const [student, setStudent] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isEditModalVisible, setIsEditModalVisible] = useState(false);
+  const [form] = Form.useForm();
 
   useEffect(() => {
     const fetchStudentDetail = async () => {
@@ -83,6 +88,38 @@ const StudentDetailPage = () => {
     }
   };
 
+  const showEditModal = () => {
+    form.setFieldsValue({
+      name: student.name,
+      surname: student.surname,
+      second_surname: student.second_surname || '',
+      nie: student.nie || '',
+      student_number: student.student_number
+    });
+    setIsEditModalVisible(true);
+  };
+
+  const handleEditCancel = () => {
+    setIsEditModalVisible(false);
+  };
+
+  const handleEditSubmit = async (values) => {
+    try {
+      await window.electronAPI.updateStudent({
+        id: parseInt(studentId),
+        ...values
+      });
+      message.success("Estudiante actualizado correctamente");
+      setIsEditModalVisible(false);
+      // Recargar los datos del estudiante
+      const data = await window.electronAPI.getStudentDetail(parseInt(studentId));
+      setStudent(data);
+    } catch (error) {
+      console.error("Error updating student:", error);
+      message.error(`Error al actualizar estudiante: ${error.message}`);
+    }
+  };
+
   // Columnas para la tabla de ayudas técnicas
   const lendingsColumns = [
     {
@@ -99,7 +136,7 @@ const StudentDetailPage = () => {
         ),
     },
     {
-      title: "Equipo",
+      title: "Equipamiento",
       dataIndex: "equipment_name",
       key: "equipment_name",
       render: (text, record) => (
@@ -109,7 +146,7 @@ const StudentDetailPage = () => {
       ),
     },
     {
-      title: "Nº Equipo",
+      title: "Nº Equipamiento",
       dataIndex: "equipment_number",
       key: "equipment_number",
       width: 120,
@@ -225,19 +262,15 @@ const StudentDetailPage = () => {
 
         <Space>
           <Button
-            type="primary"
+            type="primary" 
             icon={<EditOutlined />}
-            onClick={() =>
-              message.info(
-                "Funcionalidad para editar estudiante no implementada"
-              )
-            }
+            onClick={showEditModal}
           >
             Editar
           </Button>
           <Popconfirm
             title="¿Estás seguro de eliminar este estudiante?"
-            description="Se eliminarán todos sus ayudas técnicas asociadas."
+            description="Se eliminarán todas sus ayudas técnicas asociadas."
             onConfirm={handleDeleteStudent}
             okText="Eliminar"
             cancelText="Cancelar"
@@ -297,6 +330,83 @@ const StudentDetailPage = () => {
           size="middle"
         />
       </div>
+
+      {/* Modal de Edición */}
+      <Modal
+        title="Editar Estudiante"
+        open={isEditModalVisible}
+        onCancel={handleEditCancel}
+        footer={null}
+        destroyOnClose
+      >
+        <Form
+          form={form}
+          layout="vertical"
+          onFinish={handleEditSubmit}
+          initialValues={{
+            name: student?.name,
+            surname: student?.surname,
+            second_surname: student?.second_surname || '',
+            nie: student?.nie || '',
+            student_number: student?.student_number
+          }}
+        >
+          <Form.Item
+            name="name"
+            label="Nombre"
+            rules={[
+              { required: true, message: "Por favor ingresa el nombre" }
+            ]}
+          >
+            <Input placeholder="Nombre del estudiante" />
+          </Form.Item>
+
+          <Form.Item
+            name="surname"
+            label="Primer Apellido"
+            rules={[
+              { required: true, message: "Por favor ingresa el primer apellido" }
+            ]}
+          >
+            <Input placeholder="Primer apellido" />
+          </Form.Item>
+
+          <Form.Item
+            name="second_surname"
+            label="Segundo Apellido"
+          >
+            <Input placeholder="Segundo apellido (opcional)" />
+          </Form.Item>
+
+          <Form.Item
+            name="nie"
+            label="NIE"
+          >
+            <Input placeholder="NIE (opcional)" />
+          </Form.Item>
+
+          <Form.Item
+            name="student_number"
+            label="Número de Estudiante"
+            rules={[
+              { required: true, message: "Por favor ingresa el número de estudiante" }
+            ]}
+          >
+            <Input placeholder="Número de estudiante" />
+          </Form.Item>
+
+          <Form.Item style={{ textAlign: 'right', marginBottom: 0, marginTop: 16 }}>
+            <Space>
+              <Button onClick={handleEditCancel}>
+                Cancelar
+              </Button>
+              <Button type="primary" htmlType="submit">
+                Guardar Cambios
+              </Button>
+            </Space>
+          </Form.Item>
+        </Form>
+      </Modal>
     </div>
   );
 };

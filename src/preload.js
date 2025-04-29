@@ -11,12 +11,14 @@ contextBridge.exposeInMainWorld('electronAPI', {
   addStudent: (studentData) => ipcRenderer.invoke('db-add-student', studentData),
   deleteStudent: (studentId) => ipcRenderer.invoke('db-delete-student', studentId),
   getStudentDetail: (studentId) => ipcRenderer.invoke('db-get-student-detail', studentId),
+  updateStudent: (studentData) => ipcRenderer.invoke('db-update-student', studentData),
 
   // Equipos
   getEquipment: () => ipcRenderer.invoke('db-get-equipment'),
   addEquipment: (equipmentData) => ipcRenderer.invoke('db-add-equipment', equipmentData),
   deleteEquipment: (equipmentId) => ipcRenderer.invoke('db-delete-equipment', equipmentId),
   getEquipmentDetail: (equipmentId) => ipcRenderer.invoke('db-get-equipment-detail', equipmentId),
+  updateEquipment: (equipmentData) => ipcRenderer.invoke('db-update-equipment', equipmentData),
 
   // Ayudas Técnicas
   getTechnicalAids: () => ipcRenderer.invoke('db-get-technical-aids'),

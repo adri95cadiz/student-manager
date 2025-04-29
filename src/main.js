@@ -156,6 +156,26 @@ app.whenReady().then(() => {
     });
   });
 
+  // Actualizar un estudiante
+  ipcMain.handle('db-update-student', async (event, studentData) => {
+    const { id, name, surname, second_surname, nie, student_number } = studentData;
+    return new Promise((resolve, reject) => {
+      const sql = `UPDATE students SET name = ?, surname = ?, second_surname = ?, nie = ?, student_number = ? WHERE id = ?`;
+      db.run(sql, [name, surname, second_surname, nie, student_number, id], function(err) {
+        if (err) {
+          console.error('Error updating student:', err.message);
+          reject(err);
+        } else {
+          if (this.changes > 0) {
+            resolve({ success: true, message: 'Estudiante actualizado correctamente' });
+          } else {
+            reject(new Error('No se encontró el estudiante con el ID proporcionado.'));
+          }
+        }
+      });
+    });
+  });
+
   // Ejemplo: Eliminar un estudiante
   ipcMain.handle('db-delete-student', async (event, studentId) => {
     return new Promise((resolve, reject) => {
@@ -270,6 +290,26 @@ app.whenReady().then(() => {
           reject(err);
         } else {
           resolve({ id: this.lastID });
+        }
+      });
+    });
+  });
+
+  // Actualizar un equipo
+  ipcMain.handle('db-update-equipment', async (event, equipmentData) => {
+    const { id, equipment_number, name, initial_stock } = equipmentData;
+    return new Promise((resolve, reject) => {
+      const sql = `UPDATE equipment SET equipment_number = ?, name = ?, initial_stock = ? WHERE id = ?`;
+      db.run(sql, [equipment_number, name, initial_stock, id], function(err) {
+        if (err) {
+          console.error('Error updating equipment:', err.message);
+          reject(err);
+        } else {
+          if (this.changes > 0) {
+            resolve({ success: true, message: 'Equipo actualizado correctamente' });
+          } else {
+            reject(new Error('No se encontró el equipo con el ID proporcionado.'));
+          }
         }
       });
     });

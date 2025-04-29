@@ -3,7 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { 
   Card, Typography, Descriptions, Table, Tag, Button, 
   Space, message, Divider, Statistic, Row, Col,
-  Skeleton, Popconfirm, Tooltip, Empty, Progress
+  Skeleton, Popconfirm, Tooltip, Empty, Progress,
+  Modal, Form, Input, InputNumber
 } from 'antd';
 import {
   ArrowLeftOutlined,
@@ -24,6 +25,8 @@ const EquipmentDetailPage = () => {
   const [equipment, setEquipment] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isEditModalVisible, setIsEditModalVisible] = useState(false);
+  const [form] = Form.useForm();
 
   useEffect(() => {
     const fetchEquipmentDetail = async () => {
@@ -64,6 +67,36 @@ const EquipmentDetailPage = () => {
     } catch (error) {
       console.error("Error deleting equipment:", error);
       message.error(`Error al eliminar equipo: ${error.message}`);
+    }
+  };
+
+  const showEditModal = () => {
+    form.setFieldsValue({
+      name: equipment.name,
+      equipment_number: equipment.equipment_number,
+      initial_stock: equipment.initial_stock
+    });
+    setIsEditModalVisible(true);
+  };
+
+  const handleEditCancel = () => {
+    setIsEditModalVisible(false);
+  };
+
+  const handleEditSubmit = async (values) => {
+    try {
+      await window.electronAPI.updateEquipment({
+        id: parseInt(equipmentId),
+        ...values
+      });
+      message.success("Equipo actualizado correctamente");
+      setIsEditModalVisible(false);
+      // Recargar los datos del equipo
+      const data = await window.electronAPI.getEquipmentDetail(parseInt(equipmentId));
+      setEquipment(data);
+    } catch (error) {
+      console.error("Error updating equipment:", error);
+      message.error(`Error al actualizar equipo: ${error.message}`);
     }
   };
 
@@ -173,7 +206,7 @@ const EquipmentDetailPage = () => {
     );
   }
 
-  // Calcular ayudas técnicas	 actiaos y stock disponible
+  // Calcular ayudas técnicas activas y stock disponible
   const activeLendings = equipment.lendings.filter(lending => !lending.return_date);
   const lendedDevices = activeLendings.reduce((sum, lending) => sum + lending.quantity, 0);
   const stockPercentage = (equipment.available_stock / equipment.initial_stock) * 100;
@@ -195,13 +228,13 @@ const EquipmentDetailPage = () => {
           <Button 
             type="primary" 
             icon={<EditOutlined />}
-            onClick={() => message.info('Funcionalidad para editar equipo no implementada')}
+            onClick={showEditModal}
           >
             Editar
           </Button>
           <Popconfirm
             title="¿Estás seguro de eliminar este equipo?"
-            description="Se eliminarán todos sus ayudas técnicas asociadas."
+            description="Se eliminarán todas sus ayudas técnicas asociadas."
             onConfirm={handleDeleteEquipment}
             okText="Eliminar"
             cancelText="Cancelar"
@@ -296,6 +329,68 @@ const EquipmentDetailPage = () => {
           size="middle"
         />
       </div>
+      
+      {/* Modal de Edición */}
+      <Modal
+        title="Editar Equipo"
+        open={isEditModalVisible}
+        onCancel={handleEditCancel}
+        footer={null}
+        destroyOnClose
+      >
+        <Form
+          form={form}
+          layout="vertical"
+          onFinish={handleEditSubmit}
+          initialValues={{
+            name: equipment?.name,
+            equipment_number: equipment?.equipment_number,
+            initial_stock: equipment?.initial_stock
+          }}
+        >
+          <Form.Item
+            name="name"
+            label="Nombre"
+            rules={[
+              { required: true, message: "Por favor ingresa el nombre del equipo" }
+            ]}
+          >
+            <Input placeholder="Nombre del equipo" />
+          </Form.Item>
+
+          <Form.Item
+            name="equipment_number"
+            label="Número de Equipo"
+            rules={[
+              { required: true, message: "Por favor ingresa el número del equipo" }
+            ]}
+          >
+            <Input placeholder="Número identificador del equipo" />
+          </Form.Item>
+
+          <Form.Item
+            name="initial_stock"
+            label="Stock Inicial"
+            rules={[
+              { required: true, message: "Por favor ingresa el stock inicial" }
+            ]}
+            tooltip="Actualizar el stock inicial ajustará automáticamente el stock disponible"
+          >
+            <InputNumber min={1} placeholder="Stock inicial" style={{ width: '100%' }} />
+          </Form.Item>
+
+          <Form.Item style={{ textAlign: 'right', marginBottom: 0, marginTop: 16 }}>
+            <Space>
+              <Button onClick={handleEditCancel}>
+                Cancelar
+              </Button>
+              <Button type="primary" htmlType="submit">
+                Guardar Cambios
+              </Button>
+            </Space>
+          </Form.Item>
+        </Form>
+      </Modal>
     </div>
   );
 };
